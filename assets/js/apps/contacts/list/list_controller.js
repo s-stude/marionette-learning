@@ -3,7 +3,10 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
     List.Controller = {
 
         listContacts:function () {
-            var loadingView = new ContactManager.Common.Views.Loading();
+            var loadingView = new ContactManager.Common.Views.Loading({
+                title: 'Loading contacts'
+            });
+            
             ContactManager.mainRegion.show(loadingView);
 
             var contactsPromise = ContactManager.request('contact:entities');
