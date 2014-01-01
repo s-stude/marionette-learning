@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Marionette Contact Manager</title>
+        <link href="./assets/css/bootstrap.css" rel="stylesheet">
+        <link href="./assets/css/application.css" rel="stylesheet">
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <span class="brand">Contact manager</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-region" class="container">
+            <p>Here is static content in the web page. You'll notice that it gets
+                replaced by our app as soon as we start it.</p>
+        </div>
+
+        <script type="text/html" id="contact-list">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </script>
+
+        <script type="text/template" id="contact-list-item">
+            <td><%= firstName %></td>
+            <td><%= lastName %></td>
+            <td>
+                <button class="btn btn-sm js-show">
+                    Show
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-sm js-delete">
+                    Delete
+                </button>
+            </td>
+        </script>
+
+        <script type="text/template" id="contact-view">
+            <h1><%= firstName %> <%= lastName %></h1>
+            <p><strong>Phone number:</strong> <%= phoneNumber %></p>
+        </script>
+
+        <script type="text/template" id="missing-contact-view">
+            <div class="alert alert-warning">This contact doesn't exist !</div>
+        </script>
+
+        <script src="./assets/js/vendor/jquery.js"></script>
+        <script src="./assets/js/vendor/json2.js"></script>
+        <script src="./assets/js/vendor/underscore.js"></script>
+        <script src="./assets/js/vendor/backbone.js"></script>
+        <script src="./assets/js/vendor/backbone.marionette.js"></script>
+        <script src="./assets/js/app.js"></script>
+        <script src="./assets/js/entities/contact.js"></script>
+        <script src="./assets/js/apps/contacts/list/list_view.js"></script>
+        <script src="./assets/js/apps/contacts/list/list_controller.js"></script>
+        <script src="./assets/js/apps/contacts/show/show_view.js"></script>
+        <script src="./assets/js/apps/contacts/show/show_controller.js"></script>
+        <script src="./assets/js/apps/contacts/contacts_app.js"></script>
+
+        <script type="text/javascript">
+            ContactManager.start();
+        </script>
+
+    </body>
+</html>
