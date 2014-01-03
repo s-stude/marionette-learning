@@ -3,30 +3,41 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
         tagName:'tr',
         template:'#contact-list-item',
 
-        events: {
-            'click': 'highlightName',
-            'click button.js-delete': 'deleteClicked',
-            'click button.js-show': 'showClicked'
+        events:{
+            'click a.js-delete':'deleteClicked',
+            'click a.js-show':'showClicked',
+            'click a.js-edit':'editClicked'
         },
 
-        highlightName: function(){
-            this.$el.toggleClass('warning');
-        },
-
-        showClicked: function(e){
+        showClicked:function (e) {
             e.stopPropagation();
             this.trigger('contact:show', this.model);
         },
 
-        deleteClicked: function(e){
+        deleteClicked:function (e) {
             e.stopPropagation();
             this.trigger('contact:delete', this.model);
         },
 
-        remove: function(){
+        editClicked:function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.trigger('contact:edit', this.model);
+        },
+
+        remove:function () {
             var _this = this;
-            this.$el.fadeOut(function(){
+            this.$el.fadeOut(function () {
                 Marionette.ItemView.prototype.remove.call(_this);
+            });
+        },
+
+        flash:function (cssClass) {
+            var $view = this.$el;
+            $view.hide().toggleClass(cssClass).fadeIn(800, function () {
+                setTimeout(function () {
+                    $view.toggleClass(cssClass);
+                }, 500);
             });
         }
 
@@ -37,13 +48,7 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
         className:'table table-hover',
         template:'#contact-list',
         itemView:List.Contact,
-        itemViewContainer:'tbody',
-
-        onItemviewContactDelete: function(){
-            this.$el.fadeOut(1000, function(){
-                $(this).fadeIn(1000);
-            })
-        }
+        itemViewContainer:'tbody'
     });
 
 });

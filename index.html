@@ -6,6 +6,7 @@
         <title>Marionette Contact Manager</title>
         <link href="./assets/css/bootstrap.css" rel="stylesheet">
         <link href="./assets/css/application.css" rel="stylesheet">
+        <link href="./assets/css/jquery-ui-1.10.0.custom.css" rel="stylesheet">
     </head>
 
     <body>
@@ -22,13 +23,13 @@
             <p>Here is static content in the web page. You'll notice that it gets
                 replaced by our app as soon as we start it.</p>
         </div>
+        <div id="dialog-region"></div>
 
         <script type="text/html" id="contact-list">
             <thead>
                 <tr>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th></th>
                     <th></th>
                 </tr>
             </thead>
@@ -39,14 +40,17 @@
             <td><%= firstName %></td>
             <td><%= lastName %></td>
             <td>
-                <button class="btn btn-sm js-show">
+                <a href="#contacts/<%= id %>" class="btn btn-sm js-show">
                     Show
-                </button>
-            </td>
-            <td>
-                <button class="btn btn-sm js-delete">
+                </a>
+
+                <a href="#contacts/<%= id %>/edit" class="btn btn-sm js-edit">
+                    Edit
+                </a>
+
+                <a href="#" class="btn btn-sm js-delete">
                     Delete
-                </button>
+                </a>
             </td>
         </script>
 
@@ -55,6 +59,7 @@
             <a href="#contacts/<%= id %>/edit" class="btn btn-sm js-edit">
                 Edit this contact
             </a>
+
             <p><strong>Phone number:</strong> <%= phoneNumber %></p>
         </script>
 
@@ -64,11 +69,11 @@
 
         <script type="text/template" id="loading-view">
             <h1><%= title %></h1>
+
             <p><%= message %></p>
         </script>
 
         <script type="text/template" id="contact-form">
-            <h1>Edit <%= firstName %> <%= lastName %></h1>
             <form>
                 <div class="control-group">
                     <label for="contact-firstName" class="control-label">
@@ -93,6 +98,7 @@
         </script>
 
         <script src="./assets/js/vendor/jquery.js"></script>
+        <script src="./assets/js/vendor/jquery-ui-1.9.2.min.js"></script>
         <script src="./assets/js/vendor/json2.js"></script>
         <script src="./assets/js/vendor/underscore.js"></script>
         <script src="./assets/js/vendor/backbone.js"></script>

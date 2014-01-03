@@ -4,9 +4,9 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
 
         listContacts:function () {
             var loadingView = new ContactManager.Common.Views.Loading({
-                title: 'Loading contacts'
+                title:'Loading contacts'
             });
-            
+
             ContactManager.mainRegion.show(loadingView);
 
             var contactsPromise = ContactManager.request('contact:entities');
@@ -22,6 +22,25 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
 
                 contactsListView.on('itemview:contact:delete', function (childView, model) {
                     model.destroy();
+                });
+
+                contactsListView.on('itemview:contact:edit', function (childView, model) {
+                    var view = new ContactManager.ContactsApp.Edit.Contact({
+                        model: model,
+                        asModal: true
+                    });
+
+                    view.on('form:submit', function(data){
+                       if(model.save(data)){
+                           childView.render();
+                           ContactManager.dialogRegion.close();
+                           childView.flash('success');
+                       }else{
+                           view.triggerMethod('form:data:invalid', model.validationError);
+                       }
+                    });
+
+                    ContactManager.dialogRegion.show(view);
                 });
 
                 ContactManager.mainRegion.show(contactsListView);
