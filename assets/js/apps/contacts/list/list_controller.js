@@ -11,9 +11,17 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
 
             var contactsPromise = ContactManager.request('contact:entities');
 
+            var contactsListLayout = new List.Layout();
+            var contactsListPanel = new List.Panel();
+
             $.when(contactsPromise).done(function (contacts) {
                 var contactsListView = new List.Contacts({
                     collection:contacts
+                });
+
+                contactsListLayout.on('show', function(){
+                    contactsListLayout.panelRegion.show(contactsListPanel);
+                    contactsListLayout.contactsRegion.show(contactsListView);
                 });
 
                 contactsListView.on('itemview:contact:show', function (childView, model) {
@@ -43,7 +51,7 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
                     ContactManager.dialogRegion.show(view);
                 });
 
-                ContactManager.mainRegion.show(contactsListView);
+                ContactManager.mainRegion.show(contactsListLayout);
             });
         }
 
