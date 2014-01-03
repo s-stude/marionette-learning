@@ -1,0 +1,25 @@
+{
+  "name": "marionette",
+  "version": "0.0.0",
+  "authors": [
+    "Akim Khalilov <Akim.Khalilov@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.0.3",
+    "json2": "*",
+    "backbone.syphon": "~0.4.1",
+    "backbone": "~1.1.0",
+    "underscore": "~1.5.2",
+    "marionette": "~1.4.1",
+    "jquery": "~2.0.3"
+  }
+}
