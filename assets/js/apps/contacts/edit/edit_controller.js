@@ -12,9 +12,12 @@ ContactManager.module('ContactsApp.Edit', function (Edit, ContactManager, Backbo
                         model:contact
                     });
 
-                    view.on('form:submit', function(data){
-                        contact.save(data);
-                        ContactManager.trigger('contact:show', contact.get('id'));
+                    view.on('form:submit', function (data) {
+                        if (contact.save(data)) {
+                            ContactManager.trigger('contact:show', contact.get('id'));
+                        } else {
+                            view.triggerMethod('form:data:invalid', contact.validationError);
+                        }
                     });
 
                 } else {

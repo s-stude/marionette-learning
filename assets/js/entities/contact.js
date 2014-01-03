@@ -1,6 +1,23 @@
 ContactManager.module('Entities', function (Entities, ContactManager, Backbone, Marionette, $, _) {
     Entities.Contact = Backbone.Model.extend({
-        urlRoot:'contacts'
+        urlRoot:'contacts',
+
+        validate:function (attrs, options) {
+            var errors = {};
+
+            if (!attrs.firstName) {
+                errors.firstName = "can't be blank";
+            }
+
+            if (!attrs.lastName) {
+                errors.lastName = "can't be blank";
+            } else if (attrs.lastName.length < 2) {
+                errors.lastName = "is too short";
+            }
+            if (!_.isEmpty(errors)) {
+                return errors;
+            }
+        }
     });
 
     Entities.configureStorage(Entities.Contact);
@@ -52,14 +69,14 @@ ContactManager.module('Entities', function (Entities, ContactManager, Backbone, 
 
             setTimeout(function () {
                 contacts.fetch({
-                    success: function(data){
+                    success:function (data) {
                         d.resolve(data);
                     }
                 });
-            }, 2000);
+            }, 500);
 
             var contactsPromise = d.promise();
-            $.when(contactsPromise).done(function(contacts){
+            $.when(contactsPromise).done(function (contacts) {
                 if (!contacts.length) {
                     var models = initializeContacts();
                     contacts.reset(models);
@@ -82,7 +99,7 @@ ContactManager.module('Entities', function (Entities, ContactManager, Backbone, 
                         d.resolve(undefined);
                     }
                 });
-            }, 2000);
+            }, 500);
 
             return d.promise();
         }
