@@ -1,15 +1,19 @@
 ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbone, Marionette, $, _) {
 
     List.Layout = Marionette.Layout.extend({
-        template: '#contact-list-layout',
-        regions: {
-            panelRegion: '#panel-region',
-            contactsRegion: '#contacts-region'
+        template:'#contact-list-layout',
+        regions:{
+            panelRegion:'#panel-region',
+            contactsRegion:'#contacts-region'
         }
     });
 
     List.Panel = Marionette.ItemView.extend({
-        template: '#contact-list-panel'
+        template:'#contact-list-panel',
+
+        triggers:{
+            'click button.js-new':'contact:new'
+        }
     });
 
     List.Contact = Marionette.ItemView.extend({
@@ -28,6 +32,7 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
         },
 
         deleteClicked:function (e) {
+            e.preventDefault();
             e.stopPropagation();
             this.trigger('contact:delete', this.model);
         },
@@ -61,7 +66,21 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
         className:'table table-hover',
         template:'#contact-list',
         itemView:List.Contact,
-        itemViewContainer:'tbody'
+        itemViewContainer:'tbody',
+
+        initialize:function () {
+            this.listenTo(this.collection, 'reset', function () {
+                this.appendHtml = function (collectionView, itemView, index) {
+                    collectionView.$el.append(itemView.el);
+                }
+            });
+        },
+
+        onCompositeCollectionRendered:function () {
+            this.appendHtml = function (collectionView, itemView, index) {
+                collectionView.$el.prepend(itemView.el);
+            }
+        }
     });
 
 });
