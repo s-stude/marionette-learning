@@ -9,7 +9,8 @@ ContactManager.module('ContactsApp.Edit', function (Edit, ContactManager, Backbo
                 var view;
                 if (contact) {
                     view = new Edit.Contact({
-                        model:contact
+                        model:contact,
+                        generateTitle: true
                     });
 
                     view.on('form:submit', function (data) {

@@ -28,8 +28,7 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
                     var newContact = new ContactManager.Entities.Contact();
 
                     var view = new ContactManager.ContactsApp.New.Contact({
-                        model:newContact,
-                        asModal:true
+                        model:newContact
                     });
 
                     view.on('form:submit', function (data) {
@@ -43,7 +42,7 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
 
                         if (newContact.save(data)) {
                             contacts.add(newContact);
-                            ContactManager.dialogRegion.close();
+                            view.trigger('dialog:close');
                             contactsListView.children.findByModel(newContact).flash('success');
                         } else {
                             view.triggerMethod('form:data:invalid', newContact.validationError);
@@ -64,14 +63,13 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
 
                 contactsListView.on('itemview:contact:edit', function (childView, model) {
                     var view = new ContactManager.ContactsApp.Edit.Contact({
-                        model:model,
-                        asModal:true
+                        model:model
                     });
 
                     view.on('form:submit', function (data) {
                         if (model.save(data)) {
                             childView.render();
-                            ContactManager.dialogRegion.close();
+                            view.trigger('dialog:close');
                             childView.flash('success');
                         } else {
                             view.triggerMethod('form:data:invalid', model.validationError);
