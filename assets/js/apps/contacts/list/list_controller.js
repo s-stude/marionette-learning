@@ -1,10 +1,10 @@
-ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbone, Marionette, $, _) {
+ContactManager.module('ContactsApp.List', function(List, ContactManager, Backbone, Marionette, $, _) {
 
     List.Controller = {
 
-        listContacts:function () {
+        listContacts: function() {
             var loadingView = new ContactManager.Common.Views.Loading({
-                title:'Loading contacts'
+                title: 'Loading contacts'
             });
 
             ContactManager.mainRegion.show(loadingView);
@@ -14,26 +14,43 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
             var contactsListLayout = new List.Layout();
             var contactsListPanel = new List.Panel();
 
-            $.when(contactsPromise).done(function (contacts) {
-                var contactsListView = new List.Contacts({
-                    collection:contacts
+            $.when(contactsPromise).done(function(contacts) {
+                var filteredContacts = ContactManager.Entities.FilteredCollection({
+                    collection: contacts,
+                    filterFunction: function(filterCriterion) {
+                        var criterion = filterCriterion.toLowerCase();
+                        return function(contact) {
+                            debugger;
+                            if (contact.get('firstName').toLowerCase().indexOf(criterion) != -1 || contact.get('lastName').toLowerCase().indexOf(criterion) != -1 || contact.get('phoneNumber').toLowerCase().indexOf(criterion) != -1) {
+                                return contact;
+                            }
+                        };
+                    }
                 });
 
-                contactsListLayout.on('show', function () {
+                var contactsListView = new List.Contacts({
+                    collection: filteredContacts
+                });
+
+                contactsListPanel.on('contacts:filter', function(filterCriterion) {
+                    filteredContacts.filter(filterCriterion);
+                });
+
+                contactsListLayout.on('show', function() {
                     contactsListLayout.panelRegion.show(contactsListPanel);
                     contactsListLayout.contactsRegion.show(contactsListView);
                 });
 
-                contactsListPanel.on('contact:new', function () {
+                contactsListPanel.on('contact:new', function() {
                     var newContact = new ContactManager.Entities.Contact();
 
                     var view = new ContactManager.ContactsApp.New.Contact({
-                        model:newContact
+                        model: newContact
                     });
 
-                    view.on('form:submit', function (data) {
+                    view.on('form:submit', function(data) {
                         /* this will gone if we will use server-side */
-                        var highestId = contacts.max(function (c) {
+                        var highestId = contacts.max(function(c) {
                             return c.id
                         });
                         highestId = highestId.get('id');
@@ -43,7 +60,12 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
                         if (newContact.save(data)) {
                             contacts.add(newContact);
                             view.trigger('dialog:close');
-                            contactsListView.children.findByModel(newContact).flash('success');
+                            var newContactView = contactsListView.children.findByModel(newContact);
+                            // check whether the new contact view is displayed (it could be
+                            // invisible due to the current filter criterion)
+                            if (newContactView) {
+                                // newContactView.flash("success");
+                            }
                         } else {
                             view.triggerMethod('form:data:invalid', newContact.validationError);
                         }
@@ -53,24 +75,20 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
 
                 });
 
-                contactsListView.on('itemview:contact:show', function (childView, model) {
+                contactsListView.on('itemview:contact:show', function(childView, model) {
                     ContactManager.trigger('contact:show', model.get('id'));
                 });
 
-                contactsListView.on('itemview:contact:delete', function (childView, model) {
-                    model.destroy();
-                });
-
-                contactsListView.on('itemview:contact:edit', function (childView, model) {
+                contactsListView.on('itemview:contact:edit', function(childView, model) {
                     var view = new ContactManager.ContactsApp.Edit.Contact({
-                        model:model
+                        model: model
                     });
 
-                    view.on('form:submit', function (data) {
+                    view.on('form:submit', function(data) {
                         if (model.save(data)) {
                             childView.render();
                             view.trigger('dialog:close');
-                            childView.flash('success');
+                            // childView.flash('success');
                         } else {
                             view.triggerMethod('form:data:invalid', model.validationError);
                         }
@@ -78,6 +96,11 @@ ContactManager.module('ContactsApp.List', function (List, ContactManager, Backbo
 
                     ContactManager.dialogRegion.show(view);
                 });
+                
+                contactsListView.on('itemview:contact:delete', function(childView, model) {
+                    model.destroy();
+                });
+
 
                 ContactManager.mainRegion.show(contactsListLayout);
             });
