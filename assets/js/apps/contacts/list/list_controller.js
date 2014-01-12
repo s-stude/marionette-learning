@@ -2,7 +2,7 @@ ContactManager.module('ContactsApp.List', function(List, ContactManager, Backbon
 
     List.Controller = {
 
-        listContacts: function() {
+        listContacts: function(criterion) {
             var loadingView = new ContactManager.Common.Views.Loading({
                 title: 'Loading contacts'
             });
@@ -20,7 +20,6 @@ ContactManager.module('ContactsApp.List', function(List, ContactManager, Backbon
                     filterFunction: function(filterCriterion) {
                         var criterion = filterCriterion.toLowerCase();
                         return function(contact) {
-                            debugger;
                             if (contact.get('firstName').toLowerCase().indexOf(criterion) != -1 || contact.get('lastName').toLowerCase().indexOf(criterion) != -1 || contact.get('phoneNumber').toLowerCase().indexOf(criterion) != -1) {
                                 return contact;
                             }
@@ -28,12 +27,20 @@ ContactManager.module('ContactsApp.List', function(List, ContactManager, Backbon
                     }
                 });
 
+                if (criterion) {
+                    filteredContacts.filter(criterion);
+                    contactsListPanel.once('show', function() {
+                        contactsListPanel.triggerMethod('set:filter:criterion', criterion);
+                    });
+                };
+
                 var contactsListView = new List.Contacts({
                     collection: filteredContacts
                 });
 
                 contactsListPanel.on('contacts:filter', function(filterCriterion) {
                     filteredContacts.filter(filterCriterion);
+                    ContactManager.trigger('contacts:filter', filterCriterion);
                 });
 
                 contactsListLayout.on('show', function() {
@@ -96,7 +103,7 @@ ContactManager.module('ContactsApp.List', function(List, ContactManager, Backbon
 
                     ContactManager.dialogRegion.show(view);
                 });
-                
+
                 contactsListView.on('itemview:contact:delete', function(childView, model) {
                     model.destroy();
                 });
